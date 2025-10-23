@@ -1,0 +1,34 @@
+{
+  "pages": {
+    "/layout": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_monitor_js-_app-pages-bro-585359.js",
+      "static/css/vendors-_app-pages-browser_node_modules_next_font_google_target_css_path_app_layout_tsx_impor-8c18b7.css",
+      "static/chunks/vendors-_app-pages-browser_node_modules_next_font_google_target_css_path_app_layout_tsx_impor-8c18b7.js",
+      "static/chunks/_app-pages-browser_components_ui_view-toggle_tsx-_app-pages-browser_contexts_user-context_tsx.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
+    ],
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_monitor_js-_app-pages-bro-585359.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_external-link_js-_app-pag-63491b.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_framer-motion_dist_es_components_AnimatePresence_inde-935105.js",
+      "static/chunks/_app-pages-browser_components_ui_view-toggle_tsx-_app-pages-browser_contexts_user-context_tsx.js",
+      "static/chunks/_app-pages-browser_components_layout_navbar_tsx.js",
+      "static/chunks/app/page.js"
+    ],
+    "/dashboard/artist/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_monitor_js-_app-pages-bro-585359.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_external-link_js-_app-pag-63491b.js",
+      "static/chunks/vendors-_app-pages-browser_node_modules_lucide-react_dist_esm_icons_coins_js-_app-pages-brows-032c71.js",
+      "static/chunks/_app-pages-browser_components_ui_view-toggle_tsx-_app-pages-browser_contexts_user-context_tsx.js",
+      "static/chunks/_app-pages-browser_components_layout_navbar_tsx.js",
+      "static/chunks/app/dashboard/artist/page.js"
+    ]
+  }
+}
