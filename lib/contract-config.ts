@@ -11,18 +11,22 @@ export const CHAIN_ID = 84532; // Base Sepolia
 export const CONTRACT_ABIS = {
   SongNFT: [
     // Minting and token management
-    'function createSong(string uri, address artist, address[] memory collaborators, uint256[] memory shares) external returns (uint256)',
+    'function mintSongNFT(address account, uint256 price, uint256 songId, uint256 amount, string memory songURI, address royaltyReceiver, uint96 feeNumerator, address royaltySplit) external',
+    'function setSongURI(uint256 songId, string memory newURI) external',
+    'function uri(uint256 songId) public view returns (string memory)',
     'function balanceOf(address account, uint256 id) external view returns (uint256)',
     'function totalSupply(uint256 id) external view returns (uint256)',
     'function safeTransferFrom(address from, address to, uint256 id, uint256 amount, bytes memory data) external',
     // Royalties
     'function royaltyInfo(uint256 tokenId, uint256 salePrice) external view returns (address receiver, uint256 royaltyAmount)',
-    'function setTokenRoyalty(uint256 tokenId, address recipient, uint96 fraction) external',
+    'function setRoyalty(uint256 songId, address receiver, uint96 feeNumerator) external',
     // Ownership and roles
     'function owner() external view returns (address)',
     'function grantRole(bytes32 role, address account) external',
-    'event Transfer(address indexed from, address indexed to, uint256 indexed tokenId, uint256 amount)',
-    'event RoyaltySet(uint256 indexed tokenId, address recipient, uint96 fraction)',
+    'event TransferSingle(address indexed operator, address indexed from, address indexed to, uint256 id, uint256 value)',
+    'event TransferBatch(address indexed operator, address indexed from, address indexed to, uint256[] ids, uint256[] values)',
+    'event SongNFTMinted(address indexed account, uint256 amount, uint256 songId)',
+    'event SetURI(string uri, uint256 songId)',
   ],
   RoyaltySplitEscrow: [
     // ETH handling
