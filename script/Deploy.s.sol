@@ -11,7 +11,7 @@ contract DeployScript is Script {
     function run() external {
         uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
         address deployer = vm.addr(deployerPrivateKey);
-        
+
         // Set gas settings
         vm.txGasPrice(1_000_000_000); // 1 gwei
         vm.startBroadcast(deployerPrivateKey);
@@ -22,7 +22,7 @@ contract DeployScript is Script {
         // Set platform fee receiver address (replace with actual address)
         address platformFeeReceiver = msg.sender; // Change this to your desired fee receiver
 
-                // Deploy RoyaltySplitEscrow
+        // Deploy RoyaltySplitEscrow
         RoyaltySplitEscrow royaltySplitEscrow = new RoyaltySplitEscrow(
             deployer, // owner
             platformFeeReceiver

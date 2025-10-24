@@ -22,13 +22,13 @@ contract SetupScript is Script {
 
         // Setup SongNFT
         SongNFT songNFT = SongNFT(SONG_NFT);
-        
+
         // Setup RoyaltySplitEscrow
         RoyaltySplitEscrow royaltySplitEscrow = RoyaltySplitEscrow(ROYALTY_SPLIT_ESCROW);
-        
+
         // Setup ConditionalEscrow
         ConditionalEscrow conditionalEscrow = ConditionalEscrow(CONDITIONAL_ESCROW);
-        
+
         // 1. Set oracle in ConditionalEscrow
         conditionalEscrow.setOracle(TEST_ORACLE, true);
         console.log("Set oracle", TEST_ORACLE, "in ConditionalEscrow");

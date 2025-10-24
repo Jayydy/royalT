@@ -136,8 +136,8 @@ contract SongNFT is ERC1155, ERC2981, ERC1155Burnable, Ownable, ERC1155Supply {
         return _songURIs[songId];
     }
 
-    function setRoyalty( uint256 songId, address receiver, uint96 feeNumerator) external onlyOwner {
-        _setTokenRoyalty(songId, receiver,  feeNumerator);
+    function setRoyalty(uint256 songId, address receiver, uint96 feeNumerator) external onlyOwner {
+        _setTokenRoyalty(songId, receiver, feeNumerator);
     }
 
     // The following functions are overrides required by Solidity.

@@ -25,7 +25,9 @@ contract EscrowContract is BaseEscrow, ReentrancyGuard {
     address public owner;
     SongNFT public songNFTContract;
 
-    constructor(address _owner, address _platformFeeReceiver, address _songNFTAddress) BaseEscrow(_platformFeeReceiver) {
+    constructor(address _owner, address _platformFeeReceiver, address _songNFTAddress)
+        BaseEscrow(_platformFeeReceiver)
+    {
         owner = _owner;
         songNFTContract = SongNFT(_songNFTAddress);
     }
@@ -114,7 +116,11 @@ contract EscrowContract is BaseEscrow, ReentrancyGuard {
     }
     // multiple artists withdraw function based on royalty splits
 
-    function withdrawERC20(address token, uint256 requestedAmount, uint256 songId) external nonReentrant onlyAllowedToken(token) {
+    function withdrawERC20(address token, uint256 requestedAmount, uint256 songId)
+        external
+        nonReentrant
+        onlyAllowedToken(token)
+    {
         address account = msg.sender;
         uint256 availableAmount = balances[token][songId];
         require(availableAmount >= requestedAmount, "Insufficient token balance");

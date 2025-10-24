@@ -25,7 +25,6 @@ contract RoyaltySplitEscrow is BaseEscrow, Ownable, ReentrancyGuard {
     //mapping the song id to the recipient or recipients array
     mapping(uint256 => Recipient[]) public recipients;
 
-   
     // mapping to authorize escrow
     mapping(address => bool) public approvedEscrow;
 
@@ -228,7 +227,7 @@ contract RoyaltySplitEscrow is BaseEscrow, Ownable, ReentrancyGuard {
 
     function claimShare(uint256 songId, address token) external nonReentrant {
         require(balances[songId][msg.sender] > 0, "No funds to claim");
-        
+
         uint256 share = 0;
         for (uint256 i = 0; i < recipients[songId].length; i++) {
             if (recipients[songId][i].recipient == msg.sender) {
@@ -237,7 +236,7 @@ contract RoyaltySplitEscrow is BaseEscrow, Ownable, ReentrancyGuard {
             }
         }
         require(share > 0, "Recipient not found");
-        
+
         uint256 payment = (balances[songId][msg.sender] * share) / royaltyInfo[songId].totalShares;
         balances[songId][msg.sender] = 0;
 
