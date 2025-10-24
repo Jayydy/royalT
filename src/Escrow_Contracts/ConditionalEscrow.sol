@@ -62,11 +62,10 @@ contract ConditionalEscrow is BaseEscrow, Ownable, ReentrancyGuard {
     event FundsReleased(uint256 indexed songId, address recipient, uint256 amount);
     event Deposited(address indexed account, address indexed payer, uint256 amount, uint256 songId, uint256 chainId);
 
-    constructor(
-        address _owner,
-        address _songNFTAddress,
-        address _platformFeeReceiver
-    ) BaseEscrow(_platformFeeReceiver) Ownable(_owner) {
+    constructor(address _owner, address _songNFTAddress, address _platformFeeReceiver)
+        BaseEscrow(_platformFeeReceiver)
+        Ownable(_owner)
+    {
         songNFTContract = SongNFT(_songNFTAddress);
     }
 
@@ -94,7 +93,11 @@ contract ConditionalEscrow is BaseEscrow, Ownable, ReentrancyGuard {
         emit OracleUpdated(oracle, allowed);
     }
 
-    function depositETH(address account, address payer, uint256 songId, uint256 amount, uint256 chainId) external payable nonReentrant {
+    function depositETH(address account, address payer, uint256 songId, uint256 amount, uint256 chainId)
+        external
+        payable
+        nonReentrant
+    {
         require(msg.sender == payer, "The sender is not authorised");
         require(msg.value >= amount, "ETH amount is less than required amount");
         require(balanceOf[account][songId] > 0, "Account does not hold the nft");
@@ -105,11 +108,14 @@ contract ConditionalEscrow is BaseEscrow, Ownable, ReentrancyGuard {
         emit Deposited(account, msg.sender, songId, msg.value, chainId);
     }
 
-    function depositERC20(address account, address payer, address token, uint256 amount, uint256 songId, uint256 chainId)
-        external
-        payable
-        nonReentrant
-    {
+    function depositERC20(
+        address account,
+        address payer,
+        address token,
+        uint256 amount,
+        uint256 songId,
+        uint256 chainId
+    ) external payable nonReentrant {
         require(msg.sender == payer, "The sender is not authorised");
         require(msg.value >= amount, "ETH amount is less than required amount");
         require(balanceOf[account][songId] > 0, "Account does not hold the nft");
@@ -118,7 +124,7 @@ contract ConditionalEscrow is BaseEscrow, Ownable, ReentrancyGuard {
         IERC20(token).transferFrom(msg.sender, address(this), amount);
         balanceOf[token][songId] += amount;
 
-        emit Deposited(account, msg.sender,  amount, songId, chainId);
+        emit Deposited(account, msg.sender, amount, songId, chainId);
     }
 
     function submitSignedReport(
