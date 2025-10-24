@@ -63,6 +63,7 @@ export default function GetStartedPage() {
       const newUser = {
         id: crypto.randomUUID(),
         address: address,
+        walletAddress: address,
         role: selectedRole,
         name,
         username,
