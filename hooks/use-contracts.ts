@@ -18,17 +18,34 @@ export function useContracts() {
   const mintSongNFT = async (
     uri: string,
     artist: string,
-    collaborators: string[],
-    shares: number[]
+    price: bigint,
+    songId: number,
+    amount: number,
+    songURI: string,
+    royaltyReceiver: string,
+    feeNumerator: number,
+    royaltySplit: string
   ) => {
     try {
       const [address] = await walletClient.requestAddresses();
-      
+
+      // First set the URI for the song
+      const { request: setUriRequest } = await publicClient.simulateContract({
+        address: CONTRACT_ADDRESSES.SongNFT,
+        abi: CONTRACT_ABIS.SongNFT,
+        functionName: 'setSongURI',
+        args: [songId, songURI],
+        account: address,
+      });
+
+      await walletClient.writeContract(setUriRequest);
+
+      // Then mint the NFT
       const { request } = await publicClient.simulateContract({
         address: CONTRACT_ADDRESSES.SongNFT,
         abi: CONTRACT_ABIS.SongNFT,
-        functionName: 'createSong',
-        args: [uri, artist, collaborators, shares],
+        functionName: 'mintSongNFT',
+        args: [artist, price, songId, amount, songURI, royaltyReceiver, feeNumerator, royaltySplit],
         account: address,
       });
 

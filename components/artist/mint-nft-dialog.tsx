@@ -13,6 +13,7 @@ import { useUser } from "@/contexts/user-context"
 import { Upload, Music } from "lucide-react"
 import { uploadToIPFS } from "@/lib/ipfs"
 import { useContracts } from "@/hooks/use-contracts"
+import { parseEther } from 'viem'
 
 interface MintNFTDialogProps {
   open: boolean
@@ -89,26 +90,37 @@ export function MintNFTDialog({ open, onOpenChange, onMint }: MintNFTDialogProps
       const uri = `ipfs://${ipfsHash}`;
 
       // Create and mint the NFT using the smart contract
+      // Convert price to wei and royalty percentage to basis points
+      const priceInWei = BigInt(Math.floor(Number.parseFloat(formData.price) * 1e18)); // Convert ETH to wei
+      const royaltyFeeNumerator = Math.floor(Number.parseFloat(formData.royaltyPercentage) * 100); // Convert percentage to basis points
+
+      // Generate a unique songId (using timestamp for now)
+      const songId = Math.floor(Date.now() / 1000);
+
       const receipt = await mintSongNFT(
-        uri, 
         user.walletAddress,  // artist address
-        [],  // collaborators (empty for now)
-        []   // shares (empty for now)
+        priceInWei,  // price in wei
+        songId,  // songId
+        Number.parseInt(formData.totalSupply),  // amount to mint
+        uri,  // songURI
+        user.walletAddress,  // royaltyReceiver
+        royaltyFeeNumerator,  // feeNumerator (basis points)
+        user.walletAddress   // royaltySplit (same as artist for now)
       );
 
-      // Get token ID from event
-      const songId = receipt.logs[0].topics[3] as `0x${string}`; // Assuming this is where the token ID is
+      // Get token ID from event (use the generated songId)
+      const tokenId = songId.toString();
 
       // Create the song object
       const newSong: Song = {
-        id: songId ? songId.toString() : crypto.randomUUID(),
+        id: tokenId,
         artistId: user.id,
         title: formData.title,
         description: formData.description,
         coverImage: coverImage || `/placeholder.svg?height=400&width=400&query=${encodeURIComponent(formData.title + " album cover")}`,
         audioUrl: formData.spotifyUrl || formData.appleMusicUrl || formData.youtubeMusicUrl,
         totalSupply: Number.parseInt(formData.totalSupply),
-        mintedCount: 1, // First token minted
+        mintedCount: Number.parseInt(formData.totalSupply), // All tokens minted at once
         royaltyPercentage: Number.parseFloat(formData.royaltyPercentage),
         price: formData.price,
         createdAt: new Date().toISOString(),
@@ -120,8 +132,8 @@ export function MintNFTDialog({ open, onOpenChange, onMint }: MintNFTDialogProps
       // Create the NFT object
       const nft: NFT = {
         id: crypto.randomUUID(),
-        songId: songId ? songId.toString() : crypto.randomUUID(),
-        tokenId: Number(songId), // Token ID from blockchain
+        songId: tokenId,
+        tokenId: songId, // Token ID from blockchain
         ownerId: user.id,
         mintedAt: new Date()
       }
