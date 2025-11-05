@@ -1,6 +1,6 @@
 export const CONTRACT_ADDRESSES = {
   // Base Sepolia addresses
-  SongNFT: '0xCeEf4AF4615D1B17471Bb1dCe1e96ea04Ab238ac',
+  SongNFT: '0xf9ede06063F2372583d1d99a36B930268CfEDF00',
   RoyaltySplitEscrow: '0xc7686cd02dF92234af7eB425Dad9044C7eDAdD6E',
   ConditionalEscrow: '0x28BF3342dc25eA963b8Be2B8EcD09689aC285463',
 } as const;

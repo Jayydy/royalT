@@ -53,8 +53,8 @@ contract SongNFT is ERC1155, ERC2981, ERC1155Burnable, Ownable, ERC1155Supply {
         uint96 feeNumerator,
         address royaltySplit
     ) public onlyOwner {
-        require(_exists[songId] == false, "NFT Id already exists");
-        require(bytes(_songData[songId].URI).length > 0, "NFT URI not assigned");
+        require(!_exists[songId], "NFT Id already exists"); // Check if NFT Id already exists
+        require(bytes(songURI).length > 0, "NFT URI not assigned"); // Check if the provided songURI is valid
         require(amount > 0, "Invalid value for NFT amount");
 
         _mint(account, songId, amount, "");

@@ -1,6 +1,8 @@
 # Compiler files
 cache/
-out/
+out/*
+!out/*.json
+!out/**/*.json
 
 # Ignores development broadcast logs
 !/broadcast
@@ -16,3 +18,7 @@ node_modules
 
 # Vercel
 .vercel
+
+.next/
+
+.deploy-song-nft.ts
