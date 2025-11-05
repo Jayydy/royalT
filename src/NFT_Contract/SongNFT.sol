@@ -72,60 +72,72 @@ contract SongNFT is ERC1155, ERC2981, ERC1155Burnable, Ownable, ERC1155Supply {
         _currentSupply[songId] = amount;
         _songNFTCreator[songId] = msg.sender;
 
+        // set token royalty so marketplaces can read it
+        _setTokenRoyalty(songId, royaltyReceiver, feeNumerator);
+
         emit SongNFTMinted(account, amount, songId);
     }
 
-    // function mintBatchNFT(
-    //     address account,
-    //     uint256[] calldata prices,
-    //     uint256[] calldata songIds,
-    //     uint256[] calldata amounts,
-    //     string[] memory songURIs,
-    //     address[] calldata royaltyReceivers,
-    //     uint256[] calldata feeNumerators,
-    //     address[] calldata royaltySplits
-    // ) public onlyOwner {
-    //     require(songIds.length == amounts.length, "NFT data is incomplete");
-    //     for (uint256 i = 0; i < amounts.length; i++) {
-    //         require(amounts[i] > 0, "Invalid values for NFT amounts");
-    //     }
-    //     for (uint256 i = 0; i < songIds.length; i++) {
-    //         require(bytes(_songData[songIds[i]].URI).length > 0, "NFT id is not assigned");
-    //     }
-    //     for (uint256 i = 0; i < songURIs.length; i++) {
-    //         require(bytes(songURIs[i]).length > 0, "NFT uri is not assigned");
-    //     }
+    /**
+     * Owner-only: register a song for public sale (no tokens minted to users yet).
+     * Set metadata, totalSupply (available supply) and royalty info.
+     */
+    function createSong(
+        uint256 songId,
+        uint256 price,
+        uint256 totalSupply,
+        string memory songURI,
+        address royaltyReceiver,
+        uint96 feeNumerator,
+        address royaltySplit
+    ) external onlyOwner {
+        require(!_exists[songId], "Song id already exists");
+        require(bytes(songURI).length > 0, "URI required");
+        require(totalSupply > 0, "totalSupply > 0");
 
-    //     // Checking input consistency in all arrays
-    //     uint256 length = songIds.length;
+        _songData[songId] = SongMetadata({
+            URI: songURI,
+            price: price,
+            totalSupply: totalSupply,
+            royaltyReceiver: royaltyReceiver,
+            royaltyFee: feeNumerator,
+            royaltySplit: royaltySplit
+        });
 
-    //     require(
-    //         length == amounts.length && length == prices.length && length == songURIs.length
-    //             && length == royaltyReceivers.length && length == feeNumerators.length && length == royaltySplits.length,
-    //         "Arrays length mismatch"
-    //     );
+        _songURIs[songId] = songURI;
+        _exists[songId] = true;
+        _currentSupply[songId] = totalSupply;
+        _songNFTCreator[songId] = msg.sender;
 
-    //     mintBatchNFT(account, prices, songIds, amounts, songURIs, royaltyReceivers, feeNumerators, royaltySplits);
+        // register royalty data on-chain for marketplaces
+        _setTokenRoyalty(songId, royaltyReceiver, feeNumerator);
+    }
 
-    //     //Storing metadata for each song
-    //     for (uint256 i = 0; i < length; i++) {
-    //         uint256 songId = songIds[i];
-    //         require(!_exists[songId], "NFT Ids are already assigned");
+    /**
+     * Public payable function: buy/mint amount of songId tokens to caller.
+     * Buyer must send price * amount in msg.value. Funds are forwarded to the contract owner.
+     */
+    function buySongNFT(uint256 songId, uint256 amount) external payable {
+        require(_exists[songId], "Song not available for sale");
+        require(amount > 0, "Invalid amount");
+        SongMetadata storage meta = _songData[songId];
+        require(meta.totalSupply > 0, "Song not configured");
+        require(_currentSupply[songId] >= amount, "Not enough supply");
 
-    //         _songData[songId] = SongMetadata({
-    //             URI: songURIs[i],
-    //             price: prices[i],
-    //             totalSupply: amounts[i],
-    //             royaltyReceiver: royaltyReceivers[i],
-    //             royaltyFee: uint96(feeNumerators[i]),
-    //             royaltySplit: royaltySplits[i]
-    //         });
+        uint256 totalPrice = meta.price * amount;
+        require(msg.value == totalPrice, "Incorrect payment");
 
-    //         _exists[songId] == true;
-    //         _currentSupply[songId] = amounts[i];
-    //         _songNFTCreator[songId] = msg.sender;
-    //     }
-    // }
+        // Effects: decrement available supply before external calls
+        _currentSupply[songId] -= amount;
+
+        // Interaction: mint to buyer
+        _mint(msg.sender, songId, amount, "");
+        emit SongNFTMinted(msg.sender, amount, songId);
+
+        // Forward payment to contract owner (use call and ignore returned data, bubble revert on failure)
+        (bool sent, ) = payable(owner()).call{value: msg.value}("");
+        require(sent, "Failed to forward funds to owner");
+    }
 
     function setSongURI(uint256 songId, string memory newURI) external onlyOwner {
         _songURIs[songId] = newURI;

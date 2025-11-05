@@ -9,6 +9,7 @@ import { useState } from "react"
 import { TransakModal } from "@/components/ui/transak-modal"
 import { DisconnectWalletModal } from "@/components/ui/disconnect-wallet-modal"
 import { useAccount } from "wagmi"
+import { WalletConnect } from "@/components/wallet/wallet-connect"
 
 export function Navbar() {
   const { user } = useUser()
@@ -67,18 +68,18 @@ export function Navbar() {
               <span className="lg:hidden">Fiat</span>
             </Button>
             {isConnected && address ? (
-              <button
-                onClick={() => setDisconnectModalOpen(true)}
-                className="flex items-center gap-2 px-3 py-2 bg-primary/10 rounded-lg border border-primary/20 hover:bg-primary/20 transition-colors cursor-pointer"
-              >
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span className="text-sm font-mono text-primary">
-                  {address.slice(0, 6)}...{address.slice(-4)}
-                </span>
-              </button>
+              <div className="flex items-center gap-3">
+                <WalletConnect />
+                <button
+                  onClick={() => setDisconnectModalOpen(true)}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Disconnect
+                </button>
+              </div>
             ) : (
               <div className="[&_button]:px-3 [&_button]:py-2 sm:[&_button]:px-4 sm:[&_button]:py-2 md:[&_button]:px-5 md:[&_button]:py-3">
-                <ConnectKitButton />
+                <WalletConnect />
               </div>
             )}
           </div>

@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@argent/get-starknet": "^6.4.7",
+    "@coinbase/onchainkit": "^1.1.2",
     "@emotion/is-prop-valid": "latest",
     "@hookform/resolvers": "^3.10.0",
     "@pinata/sdk": "^2.1.0",

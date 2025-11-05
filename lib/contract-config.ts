@@ -1,6 +1,6 @@
 export const CONTRACT_ADDRESSES = {
   // Base Sepolia addresses
-  SongNFT: '0xf9ede06063F2372583d1d99a36B930268CfEDF00',
+  SongNFT: '0x9B7dE684347b295135972C9A71282694Bd860417',
   RoyaltySplitEscrow: '0xc7686cd02dF92234af7eB425Dad9044C7eDAdD6E',
   ConditionalEscrow: '0x28BF3342dc25eA963b8Be2B8EcD09689aC285463',
 } as const;
@@ -12,6 +12,8 @@ export const CONTRACT_ABIS = {
   SongNFT: [
     // Minting and token management
     'function mintSongNFT(address account, uint256 price, uint256 songId, uint256 amount, string memory songURI, address royaltyReceiver, uint96 feeNumerator, address royaltySplit) external',
+    'function createSong(uint256 songId, uint256 price, uint256 totalSupply, string memory songURI, address royaltyReceiver, uint96 feeNumerator, address royaltySplit) external',
+    'function buySongNFT(uint256 songId, uint256 amount) external payable',
     'function setSongURI(uint256 songId, string memory newURI) external',
     'function uri(uint256 songId) public view returns (string memory)',
     'function balanceOf(address account, uint256 id) external view returns (uint256)',

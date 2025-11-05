@@ -7,6 +7,10 @@ import type { Song } from "@/lib/types"
 import { Music2, Coins, TrendingUp } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
+import { useSongNFT } from "@/hooks/use-song-nft"
+import { useReadContract } from 'wagmi'
+import { CONTRACT_ADDRESSES, CONTRACT_ABIS } from '@/lib/contract-config'
+import { useState } from "react"
 
 interface MarketplaceSongCardProps {
   song: Song
@@ -15,6 +19,37 @@ interface MarketplaceSongCardProps {
 export function MarketplaceSongCard({ song }: MarketplaceSongCardProps) {
   const available = song.totalSupply - song.mintedCount
   const isAvailable = available > 0
+
+  // Get song metadata from contract
+  const { data: songData } = useReadContract({
+    address: CONTRACT_ADDRESSES.SongNFT as `0x${string}`,
+    abi: CONTRACT_ABIS.SongNFT,
+    functionName: '_songData',
+    args: [BigInt(song.id)],
+  }) as { data: readonly [string, bigint, bigint, `0x${string}`, bigint, `0x${string}`] | undefined }
+
+  const { buySongNFT, isBuying, isBuySuccess } = useSongNFT()
+
+  const handleBuyNFT = async () => {
+    if (!isAvailable || !songData) return
+
+    try {
+      // Buy 1 NFT token for now - could be made configurable later
+      const amount = 1
+      const price = songData?.[1] // price is at index 1 in the struct
+      if (!price) return
+      const totalValue = price * BigInt(amount)
+
+      await buySongNFT({
+        songId: BigInt(song.id),
+        amount: BigInt(amount),
+        value: totalValue,
+      })
+    } catch (error) {
+      console.error("Failed to buy NFT:", error)
+      alert("Failed to purchase NFT. Please try again.")
+    }
+  }
 
   return (
     <Card className="glass overflow-hidden hover:scale-105 transition-transform group">
@@ -66,11 +101,32 @@ export function MarketplaceSongCard({ song }: MarketplaceSongCardProps) {
           </div>
         </div>
 
-        <Link href={`/song/${song.id}`}>
-          <Button className="w-full bg-primary hover:bg-primary/90" disabled={!isAvailable}>
-            {isAvailable ? "Claim NFT" : "View Details"}
-          </Button>
-        </Link>
+        {isAvailable ? (
+          <TransactionToast
+            onSuccess={() => {
+              alert("NFT purchased successfully!")
+              window.location.reload()
+            }}
+            onError={(error) => {
+              console.error("Purchase failed:", error)
+              alert("Purchase failed. Please try again.")
+            }}
+          >
+            <Button
+              className="w-full bg-primary hover:bg-primary/90"
+              onClick={handleBuyNFT}
+              disabled={isBuying || !songData}
+            >
+              {isBuying ? "Purchasing..." : "Buy NFT"}
+            </Button>
+          </TransactionToast>
+        ) : (
+          <Link href={`/song/${song.id}`}>
+            <Button className="w-full bg-primary hover:bg-primary/90" disabled={!isAvailable}>
+              View Details
+            </Button>
+          </Link>
+        )}
       </div>
     </Card>
   )

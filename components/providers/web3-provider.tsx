@@ -5,6 +5,7 @@ import { WagmiProvider, createConfig, http } from "wagmi"
 import { sepolia, baseSepolia, polygonMumbai } from "wagmi/chains"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ConnectKitProvider, getDefaultConfig } from "connectkit"
+import { OnchainKitProvider } from '@coinbase/onchainkit'
 
 const config = createConfig(
   getDefaultConfig({
@@ -28,94 +29,99 @@ export function Web3Provider({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider
-          theme="midnight"
-          customTheme={{
-            "--ck-font-family": "var(--font-geist-sans)",
-            "--ck-border-radius": "12px",
-            "--ck-connectbutton-background": "oklch(0.65 0.25 285)",
-            "--ck-connectbutton-hover-background": "oklch(0.55 0.22 240)",
-            "--ck-primary-button-background": "oklch(0.65 0.25 285)",
-            "--ck-primary-button-hover-background": "oklch(0.55 0.22 240)",
-          }}
-          options={{
-            walletConnectName: "WalletConnect",
-            hideNoWalletCTA: true,
-            hideQuestionMarkCTA: true,
-            initialChainId: 11155111, // Sepolia
-            enforceSupportedChains: false,
-            customSupportedChains: [
-              {
-                id: 11155111, // Sepolia
-                name: "Ethereum Sepolia",
-                network: "sepolia",
-                nativeCurrency: {
-                  name: "Sepolia Ether",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-                rpcUrls: {
-                  default: {
-                    http: ["https://rpc.sepolia.org"],
-                  },
-                },
-                blockExplorers: {
-                  default: {
-                    name: "Etherscan",
-                    url: "https://sepolia.etherscan.io",
-                  },
-                },
-                testnet: true,
-              },
-              {
-                id: 84532, // Base Sepolia
-                name: "Base Sepolia",
-                network: "base-sepolia",
-                nativeCurrency: {
-                  name: "Sepolia Ether",
-                  symbol: "ETH",
-                  decimals: 18,
-                },
-                rpcUrls: {
-                  default: {
-                    http: ["https://sepolia.base.org"],
-                  },
-                },
-                blockExplorers: {
-                  default: {
-                    name: "BaseScan",
-                    url: "https://sepolia.basescan.org",
-                  },
-                },
-                testnet: true,
-              },
-              {
-                id: 80001, // Polygon Mumbai
-                name: "Polygon Mumbai",
-                network: "polygon-mumbai",
-                nativeCurrency: {
-                  name: "MATIC",
-                  symbol: "MATIC",
-                  decimals: 18,
-                },
-                rpcUrls: {
-                  default: {
-                    http: ["https://rpc-mumbai.maticvigil.com"],
-                  },
-                },
-                blockExplorers: {
-                  default: {
-                    name: "PolygonScan",
-                    url: "https://mumbai.polygonscan.com",
-                  },
-                },
-                testnet: true,
-              },
-            ],
-          }}
+        <OnchainKitProvider
+          apiKey={process.env.NEXT_PUBLIC_ONCHAINKIT_API_KEY}
+          chain={baseSepolia}
         >
-          {children}
-        </ConnectKitProvider>
+          <ConnectKitProvider
+            theme="midnight"
+            customTheme={{
+              "--ck-font-family": "var(--font-geist-sans)",
+              "--ck-border-radius": "12px",
+              "--ck-connectbutton-background": "oklch(0.65 0.25 285)",
+              "--ck-connectbutton-hover-background": "oklch(0.55 0.22 240)",
+              "--ck-primary-button-background": "oklch(0.65 0.25 285)",
+              "--ck-primary-button-hover-background": "oklch(0.55 0.22 240)",
+            }}
+            options={{
+              walletConnectName: "WalletConnect",
+              hideNoWalletCTA: true,
+              hideQuestionMarkCTA: true,
+              initialChainId: 84532, // Base Sepolia
+              enforceSupportedChains: false,
+              customSupportedChains: [
+                {
+                  id: 11155111, // Sepolia
+                  name: "Ethereum Sepolia",
+                  network: "sepolia",
+                  nativeCurrency: {
+                    name: "Sepolia Ether",
+                    symbol: "ETH",
+                    decimals: 18,
+                  },
+                  rpcUrls: {
+                    default: {
+                      http: ["https://rpc.sepolia.org"],
+                    },
+                  },
+                  blockExplorers: {
+                    default: {
+                      name: "Etherscan",
+                      url: "https://sepolia.etherscan.io",
+                    },
+                  },
+                  testnet: true,
+                },
+                {
+                  id: 84532, // Base Sepolia
+                  name: "Base Sepolia",
+                  network: "base-sepolia",
+                  nativeCurrency: {
+                    name: "Sepolia Ether",
+                    symbol: "ETH",
+                    decimals: 18,
+                  },
+                  rpcUrls: {
+                    default: {
+                      http: ["https://sepolia.base.org"],
+                    },
+                  },
+                  blockExplorers: {
+                    default: {
+                      name: "BaseScan",
+                      url: "https://sepolia.basescan.org",
+                    },
+                  },
+                  testnet: true,
+                },
+                {
+                  id: 80001, // Polygon Mumbai
+                  name: "Polygon Mumbai",
+                  network: "polygon-mumbai",
+                  nativeCurrency: {
+                    name: "MATIC",
+                    symbol: "MATIC",
+                    decimals: 18,
+                  },
+                  rpcUrls: {
+                    default: {
+                      http: ["https://rpc-mumbai.maticvigil.com"],
+                    },
+                  },
+                  blockExplorers: {
+                    default: {
+                      name: "PolygonScan",
+                      url: "https://mumbai.polygonscan.com",
+                    },
+                  },
+                  testnet: true,
+                },
+              ],
+            }}
+          >
+            {children}
+          </ConnectKitProvider>
+        </OnchainKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   )
